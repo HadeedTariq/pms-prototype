@@ -43,3 +43,27 @@ type OnboardingData = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+type CreateCheckoutSessionInput = {
+  plan: string;
+};
+
+type SubscriptionStatusResponse = {
+  hasSubscription: boolean;
+  isActive?: boolean;
+  planKey: string | null;
+  subscriptionStatus: string | null;
+  currentPeriodEnd: string | null;
+  entitlements: string[];
+  hasBillingAccount: boolean;
+  plan?: {
+    key: string;
+    name: string;
+    description: string | null;
+    priceAmount: number;
+    priceCurrency: string;
+    maxProperties: number | null;
+    maxTeamMembers: number | null;
+    features: string[];
+  } | null;
+};

@@ -52,7 +52,7 @@ export const useCreateOrganization = () => {
       });
       form.reset();
       setTimeout(() => {
-        navigate("/organizations");
+        navigate("/pricing-plan");
       }, 1000);
     },
     onError: (err: any) => {
@@ -65,6 +65,58 @@ export const useCreateOrganization = () => {
   });
 
   return { form: { ...form }, mutations: { ...mutator } };
+};
+
+export const useCreateCheckoutSession = () => {
+  const mutator = useMutation({
+    mutationKey: ["createCheckoutSession"],
+    mutationFn: async (payload: CreateCheckoutSessionInput) => {
+      const formattedPayload = {
+        planKey: payload.plan,
+      };
+
+      // Calls your backend endpoint that runs stripe.checkout.sessions.create()
+      const { data } = await onboardingApi.post("/checkout", formattedPayload);
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data?.url) {
+        toast({
+          title: "Redirecting to checkout...",
+          description: "Please complete your payment details on Stripe.",
+          variant: "default",
+          duration: 2500,
+        });
+
+        // Redirect the user to Stripe's hosted Checkout Page
+        window.location.href = data.url;
+      } else {
+        toast({
+          title: "Failed to initialize payment",
+          description: "No checkout session URL received.",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    },
+    onError: (err: any) => {
+      toast({
+        title:
+          err?.response?.data?.message || "Failed to create checkout session",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  return {
+    createCheckoutSession: mutator.mutate,
+    createCheckoutSessionAsync: mutator.mutateAsync,
+    isLoading: mutator.isPending,
+    isError: mutator.isError,
+    error: mutator.error,
+    mutations: { ...mutator },
+  };
 };
 
 export const useGetMyOrganization = () => {
@@ -83,3 +135,17 @@ export const useGetMyOrganization = () => {
 
   return result;
 };
+
+export const useSubscriptionStatus = () =>
+  useQuery({
+    queryKey: ["subscription-status"],
+    queryFn: async () => {
+      const { data } = await onboardingApi.get<SubscriptionStatusResponse>(
+        "/subscription/status"
+      );
+      return data;
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 30_000,
+    refetchOnMount: true,
+  });

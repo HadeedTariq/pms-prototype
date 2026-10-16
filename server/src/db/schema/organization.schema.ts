@@ -128,9 +128,9 @@ export const organizations = pgTable(
     // WHY: Every webhook event includes a Stripe customer id. We need a
     // fast reverse lookup. Partial unique index keeps it 1 customer : 1 org.
     stripeCustomerIdx: uniqueIndex("organizations_stripe_customer_idx").on(
-      table.stripeCustomerId,
+      table.stripeCustomerId
     ),
-  }),
+  })
 );
 
 export type Organization = typeof organizations.$inferSelect;

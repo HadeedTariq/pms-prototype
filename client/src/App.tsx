@@ -16,6 +16,9 @@ import ForgetPassword from "./pages/auth/routes/ForgetPassword";
 import ResetPassword from "./pages/auth/routes/ResetPassword";
 import Onboarding from "./pages/app/routes/onboarding/Onboarding";
 import AuthLayout from "./pages/app/components/AuthLayout";
+import SubscriptionHandler from "./pages/app/routes/onboarding/SubscriptionHandler";
+import BillingSuccess from "./pages/app/routes/onboarding/BillingSuccess";
+import BillingCancel from "./pages/app/routes/onboarding/BillingCancel";
 
 function App() {
   const { user } = useFullApp();
@@ -38,6 +41,9 @@ function App() {
       {/*  protected routes  */}
       <Route path="/" element={<AuthLayout />}>
         <Route path="onboarding" element={<Onboarding />} />
+        <Route path="pricing-plan" element={<SubscriptionHandler />} />
+        <Route path="dashboard/billing/success" element={<BillingSuccess />} />
+        <Route path="dashboard/billing/cancel" element={<BillingCancel />} />
       </Route>
 
       <Route

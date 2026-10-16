@@ -152,7 +152,6 @@ class OnboardingController {
             currency: organizations.currency,
             timezone: organizations.timezone,
             status: organizations.status,
-            createdAt: organizations.createdAt,
           });
 
         return org;
@@ -279,10 +278,7 @@ class OnboardingController {
           .update(organizations)
           .set(updateData)
           .where(
-            and(
-              eq(organizations.id, orgId),
-              eq(organizations.ownerId, user.id),
-            ),
+            and(eq(organizations.id, orgId), eq(organizations.ownerId, user.id))
           )
           .returning();
 

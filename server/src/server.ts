@@ -25,8 +25,15 @@ import { asyncHandler } from "./utils/asyncHandler";
 import { onboardingRouter } from "./routes/organization/onboarding.routes";
 import { db } from "./db/client";
 import { sql } from "drizzle-orm";
+import { stripeWebhookHandler } from "./webhooks/stripe.webhook";
 
 const app: Express = express();
+
+app.post(
+  "/webhooks/stripe",
+  express.raw({ type: "application/json" }),
+  stripeWebhookHandler
+);
 
 app.set("trust proxy", true);
 app.use(cookieParser());
@@ -38,7 +45,7 @@ app.use(
     origin: ["http://localhost:5173"],
     credentials: true,
     exposedHeaders: ["Set-Cookie"],
-  }),
+  })
 );
 app.use(helmet());
 app.use(
@@ -46,7 +53,7 @@ app.use(
     secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-  }),
+  })
 );
 
 app.use(passport.initialize());
@@ -58,15 +65,16 @@ interface User {
   photo: string;
 }
 
-db.execute(
-  sql`
-    update products set discount = 0 where id = '2a6ad0b4-7fca-43a6-b7e8-06e22443a18c'
-  `,
-).then((user) => {
-  console.log("====================================");
-  console.log(user.rows);
-  console.log("====================================");
-});
+// db.execute(
+//   sql`
+//     delete from subscriptions where created_at < NOW()
+
+//   `
+// ).then((user) => {
+//   console.log("====================================");
+//   console.log(user.rows);
+//   console.log("====================================");
+// });
 
 passport.use(
   new GoogleStrategy(
@@ -79,7 +87,7 @@ passport.use(
       accessToken: string,
       refreshToken: string,
       profile: Profile,
-      done: (error: any, user?: any) => void,
+      done: (error: any, user?: any) => void
     ) => {
       try {
         const user: User = {
@@ -92,15 +100,15 @@ passport.use(
       } catch (error) {
         return done(error, null);
       }
-    },
-  ),
+    }
+  )
 );
 
 const verifyCallback: VerifyFunction = (
   accessToken: string,
   refreshToken: string,
   profile: FacebookProfile,
-  done: (error: any, user?: any) => void,
+  done: (error: any, user?: any) => void
 ): void => {
   try {
     const user: User = {
@@ -123,8 +131,8 @@ passport.use(
       callbackURL: env.FACEBOOK_CALLBACK_URL || "",
       profileFields: ["id", "displayName", "photos", "email"],
     },
-    verifyCallback,
-  ),
+    verifyCallback
+  )
 );
 
 passport.serializeUser((user: any, done: (error: any, id?: any) => void) => {
@@ -134,7 +142,7 @@ passport.serializeUser((user: any, done: (error: any, id?: any) => void) => {
 passport.deserializeUser(
   (user: User, done: (error: any, user?: any) => void) => {
     done(null, user);
-  },
+  }
 );
 
 app.use(requestLogger);

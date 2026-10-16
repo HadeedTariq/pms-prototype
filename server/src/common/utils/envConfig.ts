@@ -28,6 +28,7 @@ export const env = cleanEnv(process.env, {
   FACEBOOK_CLIENT_SECRET: str({ devDefault: testOnly("dummy") }),
   FACEBOOK_CALLBACK_URL: str({ devDefault: testOnly("dummy") }),
   STRIPE_SECRET_KEY: str({ devDefault: testOnly("dummy") }),
+  STRIPE_WEBHOOK_SECRET: str({ devDefault: testOnly("dummy") }),
   GMAIL_USER: str({ devDefault: testOnly("dummy") }),
   ENCRYPTION_KEY: str({ devDefault: testOnly("dummy") }),
   REDIRECT_URI: str({

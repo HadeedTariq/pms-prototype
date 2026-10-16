@@ -1,5 +1,18 @@
 import { z } from "zod";
 
+export const createCheckoutSessionSchema = z.object({
+  planKey: z.enum(["starter", "business", "professional"], {
+    message:
+      "Invalid plan key. Must be 'starter' or 'professional' or 'business'.",
+  }),
+});
+
+export const createPortalSessionSchema = z.object({}).strict();
+
+export type CreateCheckoutSessionInput = z.infer<
+  typeof createCheckoutSessionSchema
+>;
+
 const slugSchema = z
   .string()
   .trim()
@@ -7,7 +20,7 @@ const slugSchema = z
   .max(150, "Slug must be less than 150 characters")
   .regex(
     /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-    "Slug can only contain lowercase letters, numbers, and hyphens (no leading/trailing hyphens)",
+    "Slug can only contain lowercase letters, numbers, and hyphens (no leading/trailing hyphens)"
   );
 
 export const createOrganizationSchema = z.object({
@@ -37,7 +50,7 @@ export const createOrganizationSchema = z.object({
       "resort",
       "other",
     ],
-    { message: "Invalid organization type" },
+    { message: "Invalid organization type" }
   ),
 
   country: z
